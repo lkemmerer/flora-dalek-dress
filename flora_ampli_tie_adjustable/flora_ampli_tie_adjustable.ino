@@ -32,7 +32,8 @@ LED VU meter for Arduino and Adafruit NeoPixel LEDs. More info: http://learn.ada
 #include <Adafruit_NeoPixel.h>
 #include <math.h>
 
-#define N_PIXELS  16  // Number of pixels in strand
+#define N_PIXELS  7  // Number of pixels in strand
+#define N_STRIPS  4
 #define MIC_PIN   A9  // Microphone is attached to this analog pin
 #define LED_PIN    6  // NeoPixel LED strand is connected to this pin
 #define SAMPLE_WINDOW   10  // Sample window for average level
@@ -43,13 +44,13 @@ LED VU meter for Arduino and Adafruit NeoPixel LEDs. More info: http://learn.ada
 
 
 
-byte peak = 16;      // Peak level of column; used for falling dots
+byte peak = 28;      // Peak level of column; used for falling dots
 unsigned int sample;
 
 byte dotCount = 0;  //Frame counter for peak dot
 byte dotHangCount = 0; //Frame counter for holding peak dot
 
-Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_PIXELS, LED_PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_PIXELS*N_STRIPS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 void setup()
 {
