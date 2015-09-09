@@ -91,7 +91,7 @@ void loop()
 
   //Fill the strip with rainbow gradient
   for (int i=0;i<=strip.numPixels()-1;i++){
-    strip.setPixelColor(i,Wheel(map(i,0,strip.numPixels()-1,30,150)));
+    strip.setPixelColor(ActualPixel(i),Wheel(map(i,0,strip.numPixels()-1,30,150)));
   }
 
 
@@ -109,7 +109,7 @@ void loop()
   // Set the peak dot to match the rainbow gradient
   y = strip.numPixels() - peak;
 
-  strip.setPixelColor(y-1,Wheel(map(y,0,strip.numPixels()-1,30,150)));
+  strip.setPixelColor(ActualPixel(y-1),Wheel(map(y,0,strip.numPixels()-1,30,150)));
 
   strip.show();
 
@@ -133,8 +133,9 @@ void drawLine(uint8_t from, uint8_t to, uint32_t c) {
     from = to;
     to = fromTemp;
   }
+  Serial.print("FROM "); Serial.print(from); Serial.print(" TO "); Serial.println(to);
   for(int i=from; i<=to; i++){
-    strip.setPixelColor(i, c);
+    strip.setPixelColor(ActualPixel(i), c);
   }
 }
 
@@ -201,6 +202,26 @@ newEnd, float inputValue, float curve){
   }
 
   return rangedValue;
+}
+
+int ActualPixel(int pixelNum) {
+  int column = pixelNum % N_STRIPS;
+  int row = pixelNum / N_STRIPS;
+  Serial.println("COLUMN / ROW");
+  Serial.print(column);
+  Serial.print(" / ");
+  Serial.println(row);
+  
+  Serial.print(pixelNum);
+  Serial.print(" TO ");
+  int realPix;
+  if (column % 2 == 0) {
+    realPix = (column + 1) * N_PIXELS - row;
+  } else {
+    realPix = column * N_PIXELS + row - 1;
+  }
+  Serial.println(realPix);
+  return realPix;
 }
 
 
