@@ -148,7 +148,6 @@ newEnd, float inputValue, float curve){
   float rangedValue = 0;
   boolean invFlag = 0;
 
-
   // condition curve parameter
   // limit range
 
@@ -159,8 +158,8 @@ newEnd, float inputValue, float curve){
   curve = pow(10, curve); // convert linear scale into lograthimic exponent for other pow function
 
   /*
-   Serial.println(curve * 100, DEC);   // multply by 100 to preserve resolution  
-   Serial.println(); 
+   Serial.println(curve * 100, DEC);   // multply by 100 to preserve resolution
+   Serial.println()
    */
 
   // Check for out of range inputValues
@@ -171,15 +170,15 @@ newEnd, float inputValue, float curve){
     inputValue = originalMax;
   }
 
-  // Zero Refference the values
+  // Zero Reference the values
   OriginalRange = originalMax - originalMin;
 
-  if (newEnd > newBegin){ 
+  if (newEnd > newBegin){
     NewRange = newEnd - newBegin;
   }
   else
   {
-    NewRange = newBegin - newEnd; 
+    NewRange = newBegin - newEnd;
     invFlag = 1;
   }
 
@@ -196,8 +195,8 @@ newEnd, float inputValue, float curve){
 
   }
   else     // invert the ranges
-  {   
-    rangedValue =  newBegin - (pow(normalizedCurVal, curve) * NewRange); 
+  {
+    rangedValue =  newBegin - (pow(normalizedCurVal, curve) * NewRange);
   }
 
   return rangedValue;
@@ -209,18 +208,13 @@ newEnd, float inputValue, float curve){
 uint32_t Wheel(byte WheelPos) {
   if(WheelPos < 85) {
     return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
-  } 
+  }
   else if(WheelPos < 170) {
     WheelPos -= 85;
     return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
-  } 
+  }
   else {
     WheelPos -= 170;
     return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
 }
-
-
-
-
-
