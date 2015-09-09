@@ -207,21 +207,13 @@ newEnd, float inputValue, float curve){
 int ActualPixel(int pixelNum) {
   int column = pixelNum % N_STRIPS;
   int row = pixelNum / N_STRIPS;
-  Serial.println("COLUMN / ROW");
-  Serial.print(column);
-  Serial.print(" / ");
-  Serial.println(row);
-  
-  Serial.print(pixelNum);
-  Serial.print(" TO ");
+
   int realPix;
   if (column % 2 == 0) {
-    realPix = (column + 1) * N_PIXELS - row;
+    return (column + 1) * N_PIXELS - row;
   } else {
-    realPix = column * N_PIXELS + row - 1;
+    return column * N_PIXELS + row - 1;
   }
-  Serial.println(realPix);
-  return realPix;
 }
 
 
