@@ -37,14 +37,14 @@ LED VU meter for Arduino and Adafruit NeoPixel LEDs. More info: http://learn.ada
 #define MIC_PIN   A9  // Microphone is attached to this analog pin
 #define LED_PIN    6  // NeoPixel LED strand is connected to this pin
 #define SAMPLE_WINDOW   10  // Sample window for average level
-#define PEAK_HANG 24 //Time of pause before peak dot falls
+#define PEAK_HANG 20 //Time of pause before peak dot falls
 #define PEAK_FALL 4 //Rate of falling peak dot
 #define INPUT_FLOOR 10 //Lower range of analogRead input
-#define INPUT_CEILING 300 //Max range of analogRead input, the lower the value the more sensitive (1023 = max)
+#define INPUT_CEILING 250 //Max range of analogRead input, the lower the value the more sensitive (1023 = max)
 
 
 
-byte peak = 28;      // Peak level of column; used for falling dots
+byte peak = N_PIXELS * N_STRIPS;      // Peak level of column; used for falling dots
 unsigned int sample;
 
 byte dotCount = 0;  //Frame counter for peak dot
@@ -103,7 +103,7 @@ void loop()
     dotHangCount = 0;    // make the dot hang before falling
   }
   if (c <= strip.numPixels()) { // Fill partial column with off pixels
-    drawLine(strip.numPixels(), strip.numPixels()-c, strip.Color(0, 0, 0));
+    drawLine(strip.numPixels(), strip.numPixels()-c, strip.Color(1, 1, 1));
   }
 
   // Set the peak dot to match the rainbow gradient
