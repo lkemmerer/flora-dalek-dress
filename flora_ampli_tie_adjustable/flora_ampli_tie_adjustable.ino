@@ -39,9 +39,10 @@ LED VU meter for Arduino and Adafruit NeoPixel LEDs. More info: http://learn.ada
 #define SAMPLE_WINDOW   10  // Sample window for average level
 #define PEAK_HANG 20 //Time of pause before peak dot falls
 #define PEAK_FALL 4 //Rate of falling peak dot
-#define INPUT_FLOOR 10 //Lower range of analogRead input
+#define INPUT_FLOOR 20//Lower range of analogRead input
 #define INPUT_CEILING 250 //Max range of analogRead input, the lower the value the more sensitive (1023 = max)
-
+#define FADE_TO 2 // brightness to fade down to (used ad strip.Color(FADE_TO, FADE_TO, FADE_TO))
+#define FADE_SPEED 5
 
 
 byte peak = N_PIXELS * N_STRIPS;      // Peak level of column; used for falling dots
@@ -51,10 +52,13 @@ byte dotCount = 0;  //Frame counter for peak dot
 byte dotHangCount = 0; //Frame counter for holding peak dot
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_PIXELS*N_STRIPS, LED_PIN, NEO_GRB + NEO_KHZ800);
+uint32_t faded = strip.Color(FADE_TO, FADE_TO, FADE_TO);
 
 void setup()
 {
   strip.begin();
+  strip.setBrightness(175);
+  drawLine(0, strip.numPixels()-1, faded);
   strip.show();
 }
 
@@ -88,13 +92,6 @@ void loop()
  
   // Serial.println(peakToPeak);
 
-
-  //Fill the strip with rainbow gradient
-  for (int i=0;i<=strip.numPixels()-1;i++){
-    strip.setPixelColor(ActualPixel(i),Wheel(map(i,0,strip.numPixels()-1,30,150)));
-  }
-
-
   //Scale the input logarithmically instead of linearly
   c = fscale(INPUT_FLOOR, INPUT_CEILING, strip.numPixels(), 0, peakToPeak, 2);
 
@@ -102,13 +99,18 @@ void loop()
     peak = c;        // Keep dot on top
     dotHangCount = 0;    // make the dot hang before falling
   }
+
+  //Fill the strip with rainbow gradient
+  for (int i=0; i <= strip.numPixels() - c; i++) {
+    strip.setPixelColor(ActualPixel(i),Wheel(map(i,0,strip.numPixels()-1,30,150)));
+  }
+  
   if (c <= strip.numPixels()) { // Fill partial column with off pixels
-    drawLine(strip.numPixels(), strip.numPixels()-c, strip.Color(10, 10, 10));
+    drawFade(strip.numPixels(), strip.numPixels()-c);
   }
 
   // Set the peak dot to match the rainbow gradient
   y = strip.numPixels() - peak;
-
   strip.setPixelColor(ActualPixel(y-1),Wheel(map(y,0,strip.numPixels()-1,30,150)));
 
   strip.show();
@@ -138,6 +140,34 @@ void drawLine(uint8_t from, uint8_t to, uint32_t c) {
   }
 }
 
+void drawFade(uint8_t from, uint8_t to) {
+  uint8_t fromTemp;
+  if (from > to) {
+    fromTemp = from;
+    from = to;
+    to = fromTemp;
+  }
+  for(int i=from; i<=to; i++){
+    int pixel = ActualPixel(i);
+    uint32_t oldColor = strip.getPixelColor(pixel);
+    uint32_t newColor = colorFade(oldColor);
+    strip.setPixelColor(pixel, newColor);
+  }
+}
+
+uint32_t colorFade(uint32_t c) {
+  if (c == faded) {
+    return c;
+  } else {
+    int r = (uint8_t)(c >> 16) - FADE_SPEED;
+    int g = (uint8_t)(c >>  8) - FADE_SPEED;
+    int b = (uint8_t)(c >>  0) - FADE_SPEED;
+    if (r < FADE_TO) { r = FADE_TO; }
+    if (g < FADE_TO) { g = FADE_TO; }
+    if (b < FADE_TO) { b = FADE_TO; }
+    return strip.Color(r, g, b);
+  }
+}
 
 float fscale( float originalMin, float originalMax, float newBegin, float
 newEnd, float inputValue, float curve){
@@ -191,14 +221,8 @@ newEnd, float inputValue, float curve){
     return 0;
   }
 
-  if (invFlag == 0){
-    rangedValue =  (pow(normalizedCurVal, curve) * NewRange) + newBegin;
-
-  }
-  else     // invert the ranges
-  {
-    rangedValue =  newBegin - (pow(normalizedCurVal, curve) * NewRange);
-  }
+  if (invFlag == 0){ rangedValue =  (pow(normalizedCurVal, curve) * NewRange) + newBegin; }
+  else { rangedValue =  newBegin - (pow(normalizedCurVal, curve) * NewRange); }// invert the ranges
 
   return rangedValue;
 }
