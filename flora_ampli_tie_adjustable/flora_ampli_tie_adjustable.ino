@@ -219,15 +219,17 @@ int ActualPixel(int pixelNum) {
 // Input a value 0 to 255 to get a color value.
 // The colours are a transition r - g - b - back to r.
 uint32_t Wheel(byte WheelPos) {
+  uint32_t wheel = WheelPos * 3;
+  uint32_t oppWheel = 255 - WheelPos *3;
   if(WheelPos < 85) {
-    return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+    return strip.Color(wheel, oppWheel, 0);
   }
   else if(WheelPos < 170) {
     WheelPos -= 85;
-    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+    return strip.Color(oppWheel, 0, wheel);
   }
   else {
     WheelPos -= 170;
-    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+    return strip.Color(0, wheel, oppWheel);
   }
 }
