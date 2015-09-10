@@ -133,7 +133,6 @@ void drawLine(uint8_t from, uint8_t to, uint32_t c) {
     from = to;
     to = fromTemp;
   }
-  Serial.print("FROM "); Serial.print(from); Serial.print(" TO "); Serial.println(to);
   for(int i=from; i<=to; i++){
     strip.setPixelColor(ActualPixel(i), c);
   }
