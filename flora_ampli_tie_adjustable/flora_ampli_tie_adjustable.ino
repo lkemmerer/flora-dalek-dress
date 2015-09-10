@@ -209,10 +209,12 @@ int ActualPixel(int pixelNum) {
 
   int realPix;
   if (column % 2 == 0) {
-    return (column + 1) * N_PIXELS - row;
+    realPix = (column + 1) * N_PIXELS - row - 1;
   } else {
-    return column * N_PIXELS + row - 1;
+    realPix = column * N_PIXELS + row;
   }
+
+  return realPix;
 }
 
 
