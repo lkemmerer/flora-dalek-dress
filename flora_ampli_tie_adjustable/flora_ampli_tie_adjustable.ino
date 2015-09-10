@@ -103,7 +103,7 @@ void loop()
     dotHangCount = 0;    // make the dot hang before falling
   }
   if (c <= strip.numPixels()) { // Fill partial column with off pixels
-    drawLine(strip.numPixels(), strip.numPixels()-c, strip.Color(1, 1, 1));
+    drawLine(strip.numPixels(), strip.numPixels()-c, strip.Color(10, 10, 10));
   }
 
   // Set the peak dot to match the rainbow gradient
